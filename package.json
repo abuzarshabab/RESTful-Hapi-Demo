@@ -1,0 +1,19 @@
+{
+  "name": "hapi-demo",
+  "version": "1.0.0",
+  "description": "Demo of hapi framework on nodejs platform. In this project we have used winston for logger, Swagger for API Documentation and JEST for testing. We used MongoDB for DataBase, JOI for input validation, JSON Web Token for authentication and Bcrypt for password encryption.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abuzarshabab/RESTful-Hapi-Demo.git"
+  },
+  "author": "Abuzar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abuzarshabab/RESTful-Hapi-Demo/issues"
+  },
+  "homepage": "https://github.com/abuzarshabab/RESTful-Hapi-Demo#readme"
+}
