@@ -2,10 +2,8 @@ const entity = '/user'
 const { db } = require('../../Database/connection');
 const Joi = require('joi');
 const tableName = 'customers';
-
-
 const bcrypt = require('bcrypt');
-const salt = 'Bheegi Bheegi Raton Mein'
+const { ObjectId } = require('mongodb');
 
 const userSchema = Joi.object({
     name: Joi.string().min(3).max(50).required(),
@@ -15,15 +13,19 @@ const userSchema = Joi.object({
     mobile: Joi.number().max(20).min(6)
 })
 
-const hashGenerator = function (plainText, saltRounds = 10) {
-    console.log(saltRounds)
-    bcrypt.hash(plainText, saltRounds)
-        .then(hash => {
-            return hash;
-        })
+const hashGenerator = async function (plainText, saltRounds = 10) {
+    let hash = await bcrypt.hash(plainText, saltRounds)
+    return hash;
 }
 
 module.exports = [
+    {
+        method: 'GET',
+        path: '/',
+        handler: () => {
+            return 'Go to another route';
+        }
+    },
     {
         method: 'GET',
         path: entity + '/allUsers',
@@ -38,23 +40,35 @@ module.exports = [
         options: {
             validate: {
                 payload: userSchema,
-            }
+            },
+            tags: ['api']
         },
         handler: async (request, h) => {
+
             const payload = request.payload;
-            // const hashedPassword = hashGenerator(payload.password);
-            // payload.password = hashedPassword;
-            console.log(payload);
-            // Generate Bcrypt hash 
-            // insert into payload
+            const existingUser = await db().collection(tableName).findOne({ email: payload.email })
+
+            // Guard Clause
+            if (existingUser) {
+                return { error: 'User already exists ', existingUser, email: payload.email }
+            }
+
+            payload.password = await hashGenerator(payload.password, 10);
             const ack = await db().collection(tableName).insertOne(payload);
-            return { payload, ack, msg: 'POST Register ' }
+            return { msg: 'User registration success' }
         }
     },
     {
         method: 'POST',
         path: entity + '/login',
         handler: async (request, h) => {
+            const { email, password } = request.payload;
+
+            const user = await db().collection(tableName).findOne({ email: email });
+
+            const isValid = await bcrypt.compare(password, user.password);
+
+            return { email, password, isValid };
         }
     },
     {
@@ -73,9 +87,24 @@ module.exports = [
     },
     {
         method: 'DELETE',
-        path: entity + '/remove',
+        path: entity + '/remove/{userId}',
+        // options: {
+        //     validate: {
+        //         params: Joi.object()
+        //     }
+        // },
         handler: async (request, h) => {
-            return 'DELETE /remove'
+            const userId = request.params.userId;
+            const ack = await db().collection(tableName).deleteOne({ _id: ObjectId(userId) });
+            return ack;
+        }
+    },
+    {
+        method: 'DELETE',
+        path: entity + '/removeAll',
+        handler: async (request, h) => {
+            const ack = await db().collection(tableName).deleteMany({});
+            return ack;
         }
     },
 
