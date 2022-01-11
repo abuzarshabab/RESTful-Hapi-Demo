@@ -1,4 +1,7 @@
 const Hapi = require('@hapi/hapi');
+const inert = require('@hapi/inert');
+const vision = require('@hapi/inert');
+const swagger = require('hapi-swagger');
 const db = require('./Database/connection')
 
 const init = async () => {
@@ -6,7 +9,6 @@ const init = async () => {
         port: 3000,
         host: 'localhost',
     });
-
     server.route({
         method: 'GET',
         path: '/',
@@ -15,21 +17,14 @@ const init = async () => {
         }
     });
 
-    // await server.register({
-    //     plugin: require('./routes/crud'),
-    //     routes: {
-    //         prefix: '/crud'
-    //     }
-    // });
-
-    await server.register({
-        plugin: require('./routes/user'),
-        routes: {
-            prefix: '/user',
-        }
-    })
-
-    await server.start();
+    try {
+        await server.route(require('./routes'));
+        await server.start();
+        db.connect();
+    } catch (err) {
+        console.log('Server start Error', err);
+        process.exit(0);
+    }
     console.log('Server is running on port 3000');
 }
 
@@ -38,5 +33,5 @@ process.on('unhandledRejection', err => {
     process.exit(0);
 })
 
-db.connect();
+
 init();

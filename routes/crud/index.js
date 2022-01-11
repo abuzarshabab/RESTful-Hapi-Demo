@@ -1,5 +1,6 @@
 'use strict';
 
+const entity = '/crud';
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi)
 
@@ -33,116 +34,105 @@ const userPutSchema = Joi.object({
 
 const userIdSchema = Joi.object({ userId: Joi.objectId() })
 
-exports.plugin = {
-    pkg: require('../../package.json'),
+module.exports = [
+    {
+        method: 'GET',
+        path: entity + '/',
+        handler: async (request, h) => {
+            const user = await db().collection(tableName).find({}).toArray();
+            return { ...user };
+        }
+    },
 
-    register: async function (server, options) {
-
-        // Create a route for example
-        server.route({
-            method: 'GET',
-            path: '/',
-            handler: async (request, h) => {
-                const user = await db().collection(tableName).find({}).toArray();
-                return { ...user };
-            }
-        })
-
-        // Get single user info 
-        server.route({
-            method: 'GET',
-            path: '/{userId}',
-            handler: async (request, h) => {
-                const userId = new mongo.ObjectId(request.params.userId);
-                console.log(userId)
-                const user = await db().collection(tableName).findOne(userId);
-                return user ? user : `User Not Found`;
-            }
-        })
-
-        server.route({
-            method: 'POST',
-            path: '/',
-            options: {
-                validate: {
-                    payload: userSchema,
-                },
-                response: {
-                    schema: Joi.array().items(userSchema),
-                    failAction: 'log'
-                }
+    // Get single user info 
+    {
+        method: 'GET',
+        path: entity + '/{userId}',
+        handler: async (request, h) => {
+            const userId = new mongo.ObjectId(request.params.userId);
+            console.log(userId)
+            const user = await db().collection(tableName).findOne(userId);
+            return user ? user : `User Not Found`;
+        }
+    },
+    {
+        method: 'POST',
+        path: entity + '/',
+        options: {
+            validate: {
+                payload: userSchema,
             },
-            handler: async (request, h) => {
-                const user = await db().collection(tableName).insertOne(request.payload);
-                return user;
-            },
-        });
-
-        // Put is method is on going
-        server.route({
-            method: 'PUT',
-            path: '/',
-            options: {
-                validate: {
-                    payload: userPutSchema,
-                }
-            },
-            handler: (request, h) => {
-                const userId = new mongo.ObjectId(request.payload.userId);
-                const updatePacket = {
-                    name: request.payload.name,
-                    email: request.payload.email,
-                    gender: request.payload.gender,
-                    mobile: request.payload.mobile,
-                }
-
-                console.log(updatePacket, userId)
-                const data = db().collection(tableName)
-                    .updateOne({ _id: userId }, { $set: updatePacket })
-                return data;
+            response: {
+                schema: Joi.array().items(userSchema),
+                failAction: 'log'
             }
-        })
-
-        // Patch method have some bugs
-        server.route({
-            method: 'PATCH',
-            path: '/{userId}',
-            options: {
-                validate: {
-                    payload: userPatchSchema,
-                    params: userIdSchema,
-                }
-            },
-            handler: async (request, h) => {
-                const userId = new mongo.ObjectId(request.params.userId);
-                const updatePacket = request.payload;
-                let user = null;
-
-                user = await db().collection(tableName)
-                    .findOneAndUpdate(
-                        {
-                            _id: userId,
-                        },
-                        {
-                            $set: updatePacket,
-                        },
-                    );
-                const updateStatus = user.ok ? "Update Success" : "Update Failed";
-                return { msg: updateStatus, user, updatePacket };
+        },
+        handler: async (request, h) => {
+            const user = await db().collection(tableName).insertOne(request.payload);
+            return user;
+        },
+    },
+    // Put is method is on going
+    {
+        method: 'PUT',
+        path: entity + '/',
+        options: {
+            validate: {
+                payload: userPutSchema,
             }
-        });
-
-        // Delete is Done
-        server.route({
-            method: 'DELETE',
-            path: '/{userId}',
-            handler: async (request, h) => {
-                const userId = new mongo.ObjectId(request.params.userId);
-                const user = await db().collection(tableName).deleteOne({ _id: userId });
-                return user.deletedCount ? user : 'User not found';
+        },
+        handler: (request, h) => {
+            const userId = new mongo.ObjectId(request.payload.userId);
+            const updatePacket = {
+                name: request.payload.name,
+                email: request.payload.email,
+                gender: request.payload.gender,
+                mobile: request.payload.mobile,
             }
-        })
 
-    }
-};
+            console.log(updatePacket, userId)
+            const data = db().collection(tableName)
+                .updateOne({ _id: userId }, { $set: updatePacket })
+            return data;
+        }
+    },
+    // Patch method have some bugs
+    {
+        method: 'PATCH',
+        path: entity + '/{userId}',
+        options: {
+            validate: {
+                payload: userPatchSchema,
+                params: userIdSchema,
+            }
+        },
+        handler: async (request, h) => {
+            const userId = new mongo.ObjectId(request.params.userId);
+            const updatePacket = request.payload;
+            let user = null;
 
+            user = await db().collection(tableName)
+                .findOneAndUpdate(
+                    {
+                        _id: userId,
+                    },
+                    {
+                        $set: updatePacket,
+                    },
+                );
+            const updateStatus = user.ok ? "Update Success" : "Update Failed";
+            return { msg: updateStatus, user, updatePacket };
+        }
+    },
+    // Delete done
+    {
+        method: 'DELETE',
+        path: entity + '/{userId}',
+        handler: async (request, h) => {
+            const userId = new mongo.ObjectId(request.params.userId);
+            const user = await db().collection(tableName).deleteOne({ _id: userId });
+            return user.deletedCount ? user : 'User not found';
+        }
+    },
+
+]

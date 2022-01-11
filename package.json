@@ -18,7 +18,10 @@
   "homepage": "https://github.com/abuzarshabab/RESTful-Hapi-Demo#readme",
   "dependencies": {
     "@hapi/hapi": "^20.2.1",
+    "@hapi/inert": "^6.0.4",
+    "@hapi/vision": "^6.1.0",
     "bcrypt": "^5.0.1",
+    "hapi-swagger": "^14.2.4",
     "joi": "^17.5.0",
     "joi-objectid": "^4.0.2",
     "mongodb": "^4.3.0",
