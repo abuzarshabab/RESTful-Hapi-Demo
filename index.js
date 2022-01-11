@@ -11,17 +11,23 @@ const init = async () => {
         method: 'GET',
         path: '/',
         handler: () => {
-            console.log('Index hit success');
             return 'Go to another route';
         }
     });
 
+    // await server.register({
+    //     plugin: require('./routes/crud'),
+    //     routes: {
+    //         prefix: '/crud'
+    //     }
+    // });
+
     await server.register({
-        plugin: require('./routes/crud'),
+        plugin: require('./routes/user'),
         routes: {
-            prefix: '/crud'
+            prefix: '/user',
         }
-    });
+    })
 
     await server.start();
     console.log('Server is running on port 3000');

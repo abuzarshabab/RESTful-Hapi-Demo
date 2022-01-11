@@ -82,11 +82,11 @@ exports.plugin = {
         server.route({
             method: 'PUT',
             path: '/',
-            // options: {
-            //     validate: {
-            //         payload: userPutSchema,
-            //     }
-            // },
+            options: {
+                validate: {
+                    payload: userPutSchema,
+                }
+            },
             handler: (request, h) => {
                 const userId = new mongo.ObjectId(request.payload.userId);
                 const updatePacket = {
