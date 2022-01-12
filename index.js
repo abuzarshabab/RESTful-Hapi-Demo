@@ -1,14 +1,10 @@
+const { connect, db } = require('./Database/connection');
 const Hapi = require('@hapi/hapi');
-const db = require('./Database/connection');
-const inert = require('@hapi/inert');
-const vision = require('@hapi/vision');
-const hapiSwagger = require('hapi-swagger');
-const swaggerOptions = {
-    info: {
-        title: "RESTful-Hapi-Demo  Documentation",
-        version: 2.2,
-    }
-}
+const swagger = require('./middleware/swagger');
+const logger = require('./middleware/logger');
+const jwtAuth = require('./middleware/jwtAuth');
+const routes = require('./routes');
+
 const init = async () => {
     const server = new Hapi.Server({
         port: 3000,
@@ -16,13 +12,14 @@ const init = async () => {
     });
 
     try {
-        await server.register([inert, vision, { plugin: hapiSwagger, options: swaggerOptions }])
-        await server.route(require('./routes'));
+        await server.register(swagger);
+        await server.register(jwtAuth)
+        await server.route(routes);
         await server.start();
-        await db.connect();
-        console.log('Server is running on port 3000');
+        await connect();
+        logger.info("Server started");
     } catch (err) {
-        console.log('Server start Error', err);
+        console.log("Server starting failed" + err);
         process.exit(0);
     }
 

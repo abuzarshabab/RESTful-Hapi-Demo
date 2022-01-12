@@ -5,7 +5,7 @@ const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi)
 
 
-const { db, connect, close } = require('../../Database/connection');
+const { db } = require('../../Database/connection');
 const tableName = 'users';
 const mongo = require('mongodb');
 
@@ -38,6 +38,11 @@ module.exports = [
     {
         method: 'GET',
         path: entity + '/',
+        options: {
+            description: 'Crud users',
+            notes: 'Return all existing crud',
+            tags: ['api'], // ADD THIS TAG
+        },
         handler: async (request, h) => {
             const user = await db().collection(tableName).find({}).toArray();
             return { ...user };
@@ -48,6 +53,11 @@ module.exports = [
     {
         method: 'GET',
         path: entity + '/{userId}',
+        options: {
+            description: 'Single user info',
+            notes: 'Returns user info',
+            tags: ['api'], // ADD THIS TAG
+        },
         handler: async (request, h) => {
             const userId = new mongo.ObjectId(request.params.userId);
             console.log(userId)
@@ -59,6 +69,9 @@ module.exports = [
         method: 'POST',
         path: entity + '/',
         options: {
+            description: 'Add crud user',
+            notes: 'Returns added user',
+            tags: ['api'], // ADD THIS TAG
             validate: {
                 payload: userSchema,
             },
@@ -77,11 +90,14 @@ module.exports = [
         method: 'PUT',
         path: entity + '/',
         options: {
+            description: 'Re-Write user details',
+            notes: 'Returns updated details',
+            tags: ['api'], // ADD THIS TAG
             validate: {
                 payload: userPutSchema,
             }
         },
-        handler: (request, h) => {
+        handler: async (request, h) => {
             const userId = new mongo.ObjectId(request.payload.userId);
             const updatePacket = {
                 name: request.payload.name,
@@ -91,7 +107,7 @@ module.exports = [
             }
 
             console.log(updatePacket, userId)
-            const data = db().collection(tableName)
+            const data = await db().collection(tableName)
                 .updateOne({ _id: userId }, { $set: updatePacket })
             return data;
         }
@@ -101,6 +117,9 @@ module.exports = [
         method: 'PATCH',
         path: entity + '/{userId}',
         options: {
+            description: 'Update only respected fields',
+            notes: 'Returns update details',
+            tags: ['api'], // ADD THIS TAG
             validate: {
                 payload: userPatchSchema,
                 params: userIdSchema,
@@ -128,6 +147,11 @@ module.exports = [
     {
         method: 'DELETE',
         path: entity + '/{userId}',
+        options: {
+            description: 'Delete crud user by id',
+            notes: 'Returns delete count or user not found',
+            tags: ['api'], // ADD THIS TAG
+        },
         handler: async (request, h) => {
             const userId = new mongo.ObjectId(request.params.userId);
             const user = await db().collection(tableName).deleteOne({ _id: userId });

@@ -4,7 +4,8 @@
   "description": "Demo of hapi framework on nodejs platform. In this project we have used winston for logger, Swagger for API Documentation and JEST for testing. We used MongoDB for DataBase, JOI for input validation, JSON Web Token for authentication and Bcrypt for password encryption.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -19,11 +20,14 @@
   "dependencies": {
     "@hapi/hapi": "^20.2.1",
     "@hapi/inert": "^6.0.4",
+    "@hapi/jwt": "^2.1.0",
     "@hapi/vision": "^6.1.0",
     "bcrypt": "^5.0.1",
+    "hapi-auth-jwt2": "^10.2.0",
     "hapi-swagger": "^14.2.4",
     "joi": "^17.5.0",
     "joi-objectid": "^4.0.2",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.3.0",
     "winston": "^3.4.0"
   }

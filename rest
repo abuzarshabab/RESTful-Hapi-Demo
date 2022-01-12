@@ -12,3 +12,7 @@ Input-Output-Validation: Joi,
 Password-Encryption: BCrypt,
 Testing: Jest (100% coverage),
 Continuos-Integration: Circle-Ci
+
+
+ await server.register([
+            inert, vision, { plugin: hapiSwagger, options: swaggerOptions }])
