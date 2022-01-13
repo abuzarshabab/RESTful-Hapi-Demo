@@ -5,7 +5,7 @@ const { MongoClient } = mongodb;
 const uriAtlas = 'mongodb+srv://<username>:<password>@cluster0.vjuat.mongodb.net/Hapi-demo?retryWrites=true&w=majority';
 const uriLocal = 'mongodb://localhost:27017';
 let state = { db: null };
-
+let Client
 // exports.connect = async () => {
 
 //     if (state.db === null) return callback();
@@ -23,8 +23,7 @@ let state = { db: null };
 
 exports.connect = () => {
     // if (state.db === null) return callback();
-    const Client = new MongoClient(uriLocal);
-
+    Client = new MongoClient(uriLocal);
     Client.connect()
         .then(connection => {
             const msg = `Mongo db connection established to ${uriLocal} `
@@ -53,11 +52,11 @@ exports.connect = () => {
 
 exports.db = () => state.db;
 
-// exports.close = () => {
-//     if (state.db) {
-//         state.db.close();
-//         return 'Connection terminated successfully';
-//     } else {
-//         return 'Failed "connection does not exist"'
-//     }
-// }
+exports.close = () => {
+    if (Client) {
+        Client.close();
+        console.log('Connection terminated successfully');
+    } else {
+        console.log('Failed "connection does not exist"');
+    }
+}

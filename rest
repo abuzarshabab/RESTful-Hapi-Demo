@@ -16,3 +16,5 @@ Continuos-Integration: Circle-Ci
 
  await server.register([
             inert, vision, { plugin: hapiSwagger, options: swaggerOptions }])
+
+            

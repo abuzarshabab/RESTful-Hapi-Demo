@@ -1,4 +1,4 @@
-const { connect, db } = require('./Database/connection');
+const { connect, close } = require('./Database/connection');
 const Hapi = require('@hapi/hapi');
 const swagger = require('./middleware/swagger');
 const logger = require('./middleware/logger');
@@ -17,7 +17,9 @@ const init = async () => {
         await server.route(routes);
         await server.start();
         await connect();
-        logger.info("Server started");
+        await logger.info("Server started");
+        // await setTimeout(close, 3000);
+
     } catch (err) {
         console.log("Server starting failed" + err);
         process.exit(0);
