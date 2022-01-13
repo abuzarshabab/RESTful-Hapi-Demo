@@ -23,7 +23,6 @@ const init = async () => {
     } catch (err) {
         console.log("Server starting failed" + err);
         process.exit(0);
-
     }
 
 }

@@ -77,7 +77,6 @@ const getPeanutButter = () => {
 
 test('data is peanut butter using promise', () => {
     return getPeanutButter().then(data => {
-        console.log(data)
         expect(data).toBe('peanut butter')
     })
 
@@ -85,7 +84,8 @@ test('data is peanut butter using promise', () => {
 
 const getMangoJuice = (ingredient) => {
     const mangoJuice = new Promise((resolve, reject) => {
-        if (ingredient !== 'Mango') reject('Cannot produce juice')
+        if (ingredient !== 'Mango')
+            reject('Cannot produce juice')
         resolve(`${ingredient} Juice`);
     })
     return mangoJuice
@@ -94,9 +94,9 @@ const getMangoJuice = (ingredient) => {
 test('Mango should produce only mango juice otherwise it should not produce Juice', () => {
     return getMangoJuice('Mango')
         .then(juice => {
-            console.log(juice)
             expect(juice).toBe('Mango Juice');
-        }).catch(err => {
+        })
+        .catch(err => {
             expect(err).toBe('Cannot produce juice');
         })
 })
@@ -125,4 +125,7 @@ test('It should not produce juice', async () => {
         expect(error).rejects
         // .toBe('Cannot produce juice')
     }
+})
+test('It should fail to produce', async () => {
+    await expect(getMangoJuice('Orange')).rejects.toMatch('Cannot produce juice');
 })
