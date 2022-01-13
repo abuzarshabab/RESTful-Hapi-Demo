@@ -7,8 +7,8 @@ const routes = require('./routes');
 
 const init = async () => {
     const server = new Hapi.Server({
-        port: 3000,
-        host: 'localhost',
+        port: process.env.SERVER_PORT,
+        host: process.env.SERVER_HOST,
     });
 
     try {
@@ -17,7 +17,7 @@ const init = async () => {
         await server.route(routes);
         await server.start();
         await connect();
-        await logger.info("Server started");
+        await logger.info("Server started : " + process.env.SERVER_HOST + process.env.SERVER_PORT);
 
         // await setTimeout(close, 3000);
     } catch (err) {

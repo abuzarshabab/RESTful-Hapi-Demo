@@ -1,9 +1,11 @@
 const logger = require('winston');
-
+const dotEnv = require('dotenv').config()
 const mongodb = require('mongodb');
 const { MongoClient } = mongodb;
-const uriAtlas = 'mongodb+srv://<username>:<password>@cluster0.vjuat.mongodb.net/Hapi-demo?retryWrites=true&w=majority';
-const uriLocal = 'mongodb://localhost:27017';
+
+const uriAtlas = process.env.MONGODB_ATLAS_URI;
+const uriLocal = process.env.MONGODB_LOCAL_URI;
+
 let state = { db: null };
 let Client
 // exports.connect = async () => {
