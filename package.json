@@ -23,6 +23,7 @@
     "@hapi/jwt": "^2.1.0",
     "@hapi/vision": "^6.1.0",
     "bcrypt": "^5.0.1",
+    "dotenv": "^11.0.0",
     "hapi-auth-jwt2": "^10.2.0",
     "hapi-swagger": "^14.2.4",
     "joi": "^17.5.0",
